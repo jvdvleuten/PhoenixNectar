@@ -1,0 +1,844 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PhoenixNectar Chat Demo</title>
+  <style>
+    :root {
+      --bg-sand: #f6ead8;
+      --bg-mint: #edf5ea;
+      --bg-sky: #dceef1;
+      --ink: #27313a;
+      --muted: #66737d;
+      --accent: #d85c35;
+      --accent-deep: #8f2f25;
+      --panel: rgba(255, 255, 255, 0.68);
+      --panel-border: rgba(255, 255, 255, 0.7);
+      --shadow: 0 22px 48px rgba(38, 46, 51, 0.12);
+      --radius-xl: 28px;
+      --radius-lg: 22px;
+      --radius-md: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Avenir Next", "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(255, 255, 255, 0.75), transparent 32%),
+        linear-gradient(135deg, var(--bg-sand) 0%, var(--bg-mint) 54%, var(--bg-sky) 100%);
+    }
+
+    .shell {
+      width: min(1120px, calc(100vw - 32px));
+      margin: 24px auto;
+      display: grid;
+      grid-template-columns: 340px minmax(0, 1fr);
+      gap: 18px;
+    }
+
+    .panel {
+      background: var(--panel);
+      backdrop-filter: blur(18px);
+      border: 1px solid var(--panel-border);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow);
+    }
+
+    .sidebar,
+    .stage {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .hero {
+      padding: 24px;
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #8e4e30;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(30px, 3.3vw, 48px);
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+
+    .hero p {
+      margin: 12px 0 0;
+      line-height: 1.5;
+      color: var(--muted);
+      max-width: 56ch;
+    }
+
+    .hero-meta {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .status-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.72);
+      font-size: 12px;
+      font-weight: 700;
+      color: #32404a;
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: #f2a03d;
+      box-shadow: 0 0 0 6px rgba(242, 160, 61, 0.12);
+    }
+
+    .status-chip.live .status-dot {
+      background: #42b56a;
+      box-shadow: 0 0 0 6px rgba(66, 181, 106, 0.12);
+    }
+
+    .stack {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 18px;
+    }
+
+    .stack h2 {
+      margin: 0;
+      font-size: 18px;
+      letter-spacing: -0.02em;
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .two-up {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    label {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    input,
+    textarea,
+    button {
+      font: inherit;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      border: 0;
+      outline: 0;
+      padding: 13px 15px;
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.82);
+      color: var(--ink);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+    }
+
+    input#endpoint {
+      font-family: "SF Mono", "Menlo", monospace;
+      font-size: 14px;
+    }
+
+    .button-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+      padding: 12px 16px;
+      border-radius: 999px;
+      transition: transform 140ms ease, opacity 140ms ease, box-shadow 140ms ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+    }
+
+    button:active {
+      transform: translateY(1px) scale(0.99);
+    }
+
+    .button-primary {
+      color: white;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-deep) 100%);
+      box-shadow: 0 14px 28px rgba(143, 47, 37, 0.24);
+    }
+
+    .button-secondary {
+      color: var(--ink);
+      background: rgba(255, 255, 255, 0.86);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.8);
+    }
+
+    .button-wide {
+      flex: 1 1 140px;
+    }
+
+    .metric {
+      padding: 12px 14px;
+      border-radius: var(--radius-lg);
+      background: rgba(255, 255, 255, 0.62);
+    }
+
+    .metric-label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .metric-value {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+
+    .button-row.compact {
+      gap: 8px;
+    }
+
+    .transcript {
+      min-height: 560px;
+      overflow: hidden;
+    }
+
+    .transcript-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 24px 0;
+    }
+
+    .count-badge {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.8);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    #messages {
+      padding: 18px 24px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      min-height: 460px;
+      max-height: 65vh;
+      overflow: auto;
+    }
+
+    .empty-state {
+      padding: 18px;
+      border-radius: var(--radius-lg);
+      background: rgba(255, 255, 255, 0.62);
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .entry {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      align-items: flex-start;
+      animation: rise 180ms ease-out;
+    }
+
+    .entry.self {
+      align-items: flex-end;
+    }
+
+    .entry-meta {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+    }
+
+    .bubble {
+      max-width: min(440px, 100%);
+      padding: 14px 16px;
+      border-radius: 24px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(230, 242, 244, 0.95));
+      color: var(--ink);
+      box-shadow: 0 12px 24px rgba(56, 72, 77, 0.08);
+    }
+
+    .entry.self .bubble {
+      background: linear-gradient(135deg, #eb7340 0%, #972f24 100%);
+      color: white;
+    }
+
+    .bubble p {
+      margin: 0;
+      line-height: 1.45;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .bubble img {
+      display: block;
+      max-width: min(320px, 100%);
+      max-height: 260px;
+      border-radius: 18px;
+    }
+
+    .bubble small {
+      display: block;
+      margin-bottom: 8px;
+      color: inherit;
+      opacity: 0.72;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    .composer {
+      padding: 22px;
+    }
+
+    .composer-grid {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: end;
+    }
+
+    .composer-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    .activity {
+      margin-top: 12px;
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.7);
+      color: #40505b;
+      font-size: 14px;
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @keyframes rise {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 920px) {
+      .shell {
+        grid-template-columns: 1fr;
+      }
+
+      .transcript {
+        min-height: 420px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding-bottom: 18px;
+      }
+
+      .shell {
+        width: min(100vw - 20px, 1120px);
+        margin: 10px auto;
+      }
+
+      .two-up,
+      .composer-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-meta {
+        grid-template-columns: 1fr;
+      }
+
+      #messages {
+        max-height: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <aside class="sidebar">
+      <section class="panel hero">
+        <p class="eyebrow">Phoenix Nectar</p>
+        <h1>Shared room chat for text and image messages.</h1>
+        <p>Connect the browser and iOS demos to the same room with different users. Both clients will receive the same live transcript.</p>
+        <div class="hero-meta">
+          <div class="metric">
+            <span class="metric-label">Room</span>
+            <span id="roomMetric" class="metric-value">engineering</span>
+          </div>
+          <div class="metric">
+            <span class="metric-label">User</span>
+            <span id="userMetric" class="metric-value">web-demo-user</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel stack">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
+          <h2>Connection</h2>
+          <div id="statusChip" class="status-chip">
+            <span class="status-dot"></span>
+            <span id="statusText">Offline</span>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label for="endpoint">Endpoint</label>
+          <input id="endpoint" value="ws://127.0.0.1:4000/socket" />
+        </div>
+
+        <div class="two-up">
+          <div class="field-group">
+            <label for="user">User</label>
+            <input id="user" value="web-demo-user" />
+          </div>
+          <div class="field-group">
+            <label for="room">Room</label>
+            <input id="room" value="engineering" />
+          </div>
+        </div>
+
+        <div class="button-row compact">
+          <button id="connect" class="button-primary button-wide">Connect</button>
+          <button id="disconnect" class="button-secondary button-wide">Disconnect</button>
+        </div>
+      </section>
+    </aside>
+
+    <section class="stage">
+      <section class="panel transcript">
+        <div class="transcript-head">
+          <h2>Transcript</h2>
+          <div id="messageCount" class="count-badge">0 items</div>
+        </div>
+        <div id="messages">
+          <div id="emptyState" class="empty-state">No messages yet. Connect both demos, join the same room, and start sending text or images.</div>
+        </div>
+      </section>
+
+      <section class="panel composer">
+        <h2 style="margin:0 0 14px;">Composer</h2>
+        <div class="composer-grid">
+          <div class="field-group" style="margin:0;">
+            <label for="body">Message</label>
+            <input id="body" placeholder="Type a message" />
+          </div>
+          <button id="send" class="button-primary">Send</button>
+        </div>
+
+        <div class="composer-actions">
+          <button id="pickImage" class="button-secondary">Pick Image</button>
+          <button id="uploadImage" class="button-secondary">Upload Selected Image</button>
+          <input id="uploadInput" class="hidden" type="file" accept="image/*" />
+        </div>
+
+        <div id="activity" class="activity">Ready.</div>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    const endpointInput = document.querySelector("#endpoint")
+    const userInput = document.querySelector("#user")
+    const roomInput = document.querySelector("#room")
+    const bodyInput = document.querySelector("#body")
+    const connectButton = document.querySelector("#connect")
+    const disconnectButton = document.querySelector("#disconnect")
+    const sendButton = document.querySelector("#send")
+    const pickImageButton = document.querySelector("#pickImage")
+    const uploadImageButton = document.querySelector("#uploadImage")
+    const uploadInput = document.querySelector("#uploadInput")
+    const messages = document.querySelector("#messages")
+    const emptyState = document.querySelector("#emptyState")
+    const activity = document.querySelector("#activity")
+    const statusChip = document.querySelector("#statusChip")
+    const statusText = document.querySelector("#statusText")
+    const roomMetric = document.querySelector("#roomMetric")
+    const userMetric = document.querySelector("#userMetric")
+    const messageCount = document.querySelector("#messageCount")
+    const maxUploadBytes = 700000
+    const maxDimension = 1600
+
+    let socket = null
+    let activeTopic = null
+    let activeUser = null
+    let joinRef = null
+    let refCounter = 0
+    let pendingPushResolvers = new Map()
+
+    const updateCounts = () => {
+      const count = messages.querySelectorAll(".entry").length
+      messageCount.textContent = `${count} item${count === 1 ? "" : "s"}`
+      emptyState.style.display = count === 0 ? "block" : "none"
+    }
+
+    const setActivity = (line) => {
+      activity.textContent = line
+    }
+
+    const setConnectionState = (connected) => {
+      statusChip.classList.toggle("live", connected)
+      statusText.textContent = connected ? "Live" : "Offline"
+    }
+
+    const appendEntry = ({author, body, imageBytes, system = false}) => {
+      const entry = document.createElement("div")
+      const isSelf = !system && author && author === activeUser
+      entry.className = `entry${isSelf ? " self" : ""}`
+
+      if (author) {
+        const meta = document.createElement("div")
+        meta.className = "entry-meta"
+        meta.textContent = author
+        entry.appendChild(meta)
+      }
+
+      const bubble = document.createElement("div")
+      bubble.className = "bubble"
+
+      if (body) {
+        const text = document.createElement("p")
+        text.textContent = body
+        bubble.appendChild(text)
+      }
+
+      if (imageBytes) {
+        const label = document.createElement("small")
+        label.textContent = `${imageBytes.byteLength} bytes`
+        const img = document.createElement("img")
+        img.src = URL.createObjectURL(new Blob([imageBytes]))
+        bubble.appendChild(label)
+        bubble.appendChild(img)
+      }
+
+      if (system) {
+        const text = document.createElement("p")
+        text.textContent = body
+        bubble.appendChild(text)
+      }
+
+      entry.appendChild(bubble)
+      messages.appendChild(entry)
+      messages.scrollTop = messages.scrollHeight
+      updateCounts()
+    }
+
+    const nextRef = () => {
+      refCounter += 1
+      return String(refCounter)
+    }
+
+    const base64UrlEncode = (value) => {
+      const bytes = new TextEncoder().encode(value)
+      let binary = ""
+      bytes.forEach((byte) => {
+        binary += String.fromCharCode(byte)
+      })
+      return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "")
+    }
+
+    const websocketEndpoint = (rawEndpoint) => {
+      const url = new URL(rawEndpoint)
+      url.protocol = url.protocol === "https:" ? "wss:" : "ws:"
+      if (!url.pathname.endsWith("/websocket")) {
+        url.pathname = url.pathname.replace(/\/$/, "") + "/websocket"
+      }
+      if (!url.searchParams.has("vsn")) {
+        url.searchParams.set("vsn", "2.0.0")
+      }
+      url.searchParams.set("device_id", "web-demo")
+      return url.toString()
+    }
+
+    const sendFrame = (topic, event, payload, ref = nextRef(), currentJoinRef = joinRef) => {
+      const frame = [currentJoinRef, ref, topic, event, payload]
+      socket.send(JSON.stringify(frame))
+      return ref
+    }
+
+    const waitForReply = (ref) => new Promise((resolve, reject) => {
+      pendingPushResolvers.set(ref, {resolve, reject})
+      setTimeout(() => {
+        if (pendingPushResolvers.has(ref)) {
+          pendingPushResolvers.delete(ref)
+          reject(new Error("timeout"))
+        }
+      }, 5000)
+    })
+
+    const compressImageFile = async (file) => {
+      if (file.size <= maxUploadBytes) {
+        return file.arrayBuffer()
+      }
+
+      const bitmap = await createImageBitmap(file)
+      const canvas = document.createElement("canvas")
+      const ctx = canvas.getContext("2d")
+      const baseScale = Math.min(1, maxDimension / Math.max(bitmap.width, bitmap.height))
+      const scaleSteps = [1, 0.85, 0.7, 0.55, 0.4, 0.3, 0.2, 0.12]
+      const qualitySteps = [0.82, 0.7, 0.55, 0.4, 0.3, 0.22, 0.16, 0.1]
+
+      for (const scaleStep of scaleSteps) {
+        const scale = Math.max(0.05, baseScale * scaleStep)
+        const width = Math.max(1, Math.round(bitmap.width * scale))
+        const height = Math.max(1, Math.round(bitmap.height * scale))
+        canvas.width = width
+        canvas.height = height
+        ctx.clearRect(0, 0, width, height)
+        ctx.drawImage(bitmap, 0, 0, width, height)
+
+        for (const quality of qualitySteps) {
+          const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/jpeg", quality))
+          if (blob && blob.size <= maxUploadBytes) {
+            return blob.arrayBuffer()
+          }
+        }
+      }
+
+      throw new Error("image too large after compression")
+    }
+
+    const refreshMetrics = () => {
+      roomMetric.textContent = roomInput.value.trim() || "room"
+      userMetric.textContent = userInput.value.trim().toLowerCase() || "user"
+    }
+
+    endpointInput.addEventListener("input", refreshMetrics)
+    roomInput.addEventListener("input", refreshMetrics)
+    userInput.addEventListener("input", refreshMetrics)
+    refreshMetrics()
+    updateCounts()
+
+    connectButton.addEventListener("click", () => {
+      const endpoint = endpointInput.value
+      const userID = userInput.value.trim().toLowerCase()
+      const roomID = roomInput.value.trim()
+      const token = `user:${userID}`
+      const topic = `private:room:${roomID}`
+
+      if (!endpoint || !userID || !roomID) {
+        setActivity("endpoint, user, and room are required")
+        return
+      }
+
+      pendingPushResolvers.forEach(({reject}) => reject(new Error("disconnected")))
+      pendingPushResolvers.clear()
+      socket?.close()
+
+      activeTopic = topic
+      activeUser = userID
+      joinRef = null
+      const wsURL = websocketEndpoint(endpoint)
+      socket = new WebSocket(wsURL, ["phoenix", `base64url.bearer.phx.${base64UrlEncode(token)}`])
+      socket.binaryType = "arraybuffer"
+      setActivity(`connecting to ${wsURL}`)
+
+      socket.addEventListener("open", () => {
+        setConnectionState(true)
+        setActivity(`connected ${wsURL}`)
+        joinRef = nextRef()
+        sendFrame(topic, "phx_join", {}, joinRef, joinRef)
+      })
+
+      socket.addEventListener("message", (event) => {
+        if (event.data instanceof ArrayBuffer) {
+          const view = new DataView(event.data)
+          const kind = view.getUint8(0)
+          if (kind === 2) {
+            const topicLen = view.getUint8(1)
+            const eventLen = view.getUint8(2)
+            let offset = 3
+            const topicBytes = new Uint8Array(event.data.slice(offset, offset + topicLen))
+            offset += topicLen
+            const eventBytes = new Uint8Array(event.data.slice(offset, offset + eventLen))
+            offset += eventLen
+            const incomingTopic = new TextDecoder().decode(topicBytes)
+            const incomingEvent = new TextDecoder().decode(eventBytes)
+            const payload = event.data.slice(offset)
+            if (incomingTopic === activeTopic && incomingEvent === "image:posted") {
+              appendEntry({author: "image", imageBytes: payload})
+              setActivity(`image received: ${payload.byteLength} bytes`)
+            }
+          }
+          return
+        }
+
+        const [incomingJoinRef, ref, incomingTopic, incomingEvent, payload] = JSON.parse(event.data)
+
+        if (incomingEvent === "phx_reply" && ref) {
+          const pending = pendingPushResolvers.get(ref)
+          if (pending) {
+            pendingPushResolvers.delete(ref)
+            pending.resolve({joinRef: incomingJoinRef, topic: incomingTopic, payload})
+          }
+
+          if (ref === joinRef) {
+            if (payload.status === "ok") {
+              setActivity(`joined ${incomingTopic}`)
+            } else {
+              setActivity(`join failed: ${JSON.stringify(payload.response || payload)}`)
+            }
+          }
+          return
+        }
+
+        if (incomingEvent === "message:posted") {
+          appendEntry({author: payload.from_user_id, body: payload.body})
+        }
+      })
+
+      socket.addEventListener("close", (event) => {
+        setConnectionState(false)
+        setActivity(`closed ${event.code}${event.reason ? ` ${event.reason}` : ""}`)
+      })
+
+      socket.addEventListener("error", () => {
+        setActivity("socket error")
+      })
+    })
+
+    disconnectButton.addEventListener("click", () => {
+      pendingPushResolvers.forEach(({reject}) => reject(new Error("disconnected")))
+      pendingPushResolvers.clear()
+      socket?.close(1000, "user_disconnected")
+      setConnectionState(false)
+      setActivity("disconnected")
+    })
+
+    sendButton.addEventListener("click", async () => {
+      if (!socket || socket.readyState !== WebSocket.OPEN || !activeTopic || !joinRef) {
+        setActivity("connect first")
+        return
+      }
+
+      const body = bodyInput.value.trim()
+      if (!body) {
+        setActivity("message body is required")
+        return
+      }
+
+      const ref = sendFrame(activeTopic, "message:send", {body})
+      try {
+        const reply = await waitForReply(ref)
+        if (reply.payload.status === "ok") {
+          setActivity(`sent ${reply.payload.response.message_id}`)
+          bodyInput.value = ""
+        } else {
+          setActivity(`send failed: ${JSON.stringify(reply.payload.response || reply.payload)}`)
+        }
+      } catch (error) {
+        setActivity(`send failed: ${error.message}`)
+      }
+    })
+
+    pickImageButton.addEventListener("click", () => uploadInput.click())
+
+    uploadImageButton.addEventListener("click", () => {
+      if (!uploadInput.files || !uploadInput.files[0]) {
+        setActivity("pick an image first")
+        return
+      }
+      uploadInput.dispatchEvent(new Event("change"))
+    })
+
+    uploadInput.addEventListener("change", async () => {
+      const file = uploadInput.files && uploadInput.files[0]
+      if (!file) {
+        return
+      }
+      if (!socket || socket.readyState !== WebSocket.OPEN || !activeTopic || !joinRef) {
+        setActivity("connect first")
+        return
+      }
+
+      try {
+        const payload = await compressImageFile(file)
+        const joinRefBytes = new TextEncoder().encode(joinRef)
+        const ref = nextRef()
+        const refBytes = new TextEncoder().encode(ref)
+        const topicBytes = new TextEncoder().encode(activeTopic)
+        const eventBytes = new TextEncoder().encode("binary:upload")
+        const header = new Uint8Array(5 + joinRefBytes.length + refBytes.length + topicBytes.length + eventBytes.length)
+        let offset = 0
+        header[offset++] = 0
+        header[offset++] = joinRefBytes.length
+        header[offset++] = refBytes.length
+        header[offset++] = topicBytes.length
+        header[offset++] = eventBytes.length
+        header.set(joinRefBytes, offset); offset += joinRefBytes.length
+        header.set(refBytes, offset); offset += refBytes.length
+        header.set(topicBytes, offset); offset += topicBytes.length
+        header.set(eventBytes, offset)
+
+        const combined = new Uint8Array(header.byteLength + payload.byteLength)
+        combined.set(header, 0)
+        combined.set(new Uint8Array(payload), header.byteLength)
+        socket.send(combined.buffer)
+        setActivity(`image uploaded: ${combined.byteLength - header.byteLength} bytes`)
+        uploadInput.value = ""
+      } catch (error) {
+        setActivity(`image upload failed: ${error.message}`)
+      }
+    })
+  </script>
+</body>
+</html>

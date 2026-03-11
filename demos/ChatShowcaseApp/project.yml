@@ -1,0 +1,32 @@
+name: ChatShowcaseApp
+options:
+  minimumXcodeGenVersion: 2.45.2
+  deploymentTarget:
+    iOS: "17.0"
+packages:
+  PhoenixNectar:
+    path: ../../
+targets:
+  ChatShowcaseApp:
+    type: application
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - Sources/ChatShowcaseApp
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: io.phoenixnectar.chatshowcase
+        PRODUCT_NAME: ChatShowcaseApp
+        SWIFT_VERSION: 6.0
+        SWIFT_STRICT_CONCURRENCY: complete
+        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UIRequiresFullScreen: NO
+        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: UIInterfaceOrientationPortrait
+        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
+        GENERATE_INFOPLIST_FILE: YES
+    dependencies:
+      - package: PhoenixNectar
+        product: PhoenixNectar
+    scheme:
+      testTargets: []

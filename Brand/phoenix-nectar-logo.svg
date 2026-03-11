@@ -1,0 +1,27 @@
+<svg width="1200" height="320" viewBox="0 0 1200 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="18" y1="18" x2="234" y2="246" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F7EAD9"/>
+      <stop offset="0.5" stop-color="#EEF5EB"/>
+      <stop offset="1" stop-color="#DCEEF2"/>
+    </linearGradient>
+    <linearGradient id="flame" x1="84" y1="52" x2="170" y2="194" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F29A3A"/>
+      <stop offset="0.52" stop-color="#E35B35"/>
+      <stop offset="1" stop-color="#8E2E25"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="18" y="18" width="216" height="216" rx="52" fill="url(#bg)"/>
+  <circle cx="78" cy="74" r="28" fill="white" fill-opacity="0.34"/>
+  <circle cx="194" cy="188" r="36" fill="#D1E6EA" fill-opacity="0.52"/>
+
+  <path d="M127 43C151 68 191 115 191 165C191 214 159 251 127 274C95 251 62 215 62 170C62 119 96 71 127 43Z" fill="url(#flame)"/>
+  <path d="M132 72C152 91 169 120 169 151C169 178 154 199 132 218C142 192 137 165 117 139C99 119 91 101 92 83C101 78 112 73 132 72Z" fill="#FFF2E2"/>
+  <path d="M102 90C98 115 107 142 132 170C159 200 166 226 151 252C124 245 97 226 80 198C60 166 66 119 102 90Z" fill="#2A343D"/>
+  <circle cx="168" cy="89" r="12" fill="#7AC87A"/>
+
+  <text x="278" y="128" fill="#27313A" font-size="74" font-weight="800" font-family="Avenir Next, Inter, system-ui, sans-serif" letter-spacing="-0.06em">Phoenix</text>
+  <text x="278" y="198" fill="#8E2E25" font-size="74" font-weight="800" font-family="Avenir Next, Inter, system-ui, sans-serif" letter-spacing="-0.06em">Nectar</text>
+  <text x="282" y="244" fill="#66737D" font-size="24" font-weight="700" font-family="Avenir Next, Inter, system-ui, sans-serif" letter-spacing="0.01em">Actor-first Phoenix Channels client for Swift</text>
+</svg>

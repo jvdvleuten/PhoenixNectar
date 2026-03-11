@@ -1,0 +1,23 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="76" y1="76" x2="866" y2="884" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F7EAD9"/>
+      <stop offset="0.48" stop-color="#EEF5EB"/>
+      <stop offset="1" stop-color="#DCEEF2"/>
+    </linearGradient>
+    <linearGradient id="flame" x1="372" y1="236" x2="660" y2="722" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F29A3A"/>
+      <stop offset="0.52" stop-color="#E35B35"/>
+      <stop offset="1" stop-color="#8E2E25"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="36" y="36" width="952" height="952" rx="230" fill="url(#bg)"/>
+  <circle cx="256" cy="248" r="118" fill="white" fill-opacity="0.34"/>
+  <circle cx="772" cy="764" r="146" fill="#D1E6EA" fill-opacity="0.52"/>
+
+  <path d="M521 194C614 289 732 406 732 563C732 715 632 821 521 894C410 821 310 716 310 577C310 417 418 302 521 194Z" fill="url(#flame)"/>
+  <path d="M542 312C611 377 662 466 662 555C662 630 622 698 559 760C590 670 575 584 503 502C442 432 418 373 420 312C451 287 485 270 542 312Z" fill="#FFF2E2"/>
+  <path d="M427 336C411 423 440 505 520 594C599 682 614 754 569 833C473 802 391 735 344 652C287 552 304 414 427 336Z" fill="#2A343D"/>
+  <circle cx="672" cy="354" r="54" fill="#7AC87A"/>
+</svg>
