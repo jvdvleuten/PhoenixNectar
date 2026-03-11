@@ -1,0 +1,47 @@
+name: Bug report
+description: Report a reproducible defect in PhoenixNectar.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for filing a bug. Please include a minimal reproduction and the exact Swift/Phoenix versions when possible.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What is happening, and what did you expect instead?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: Share the smallest code sample or sequence of steps that reproduces the issue.
+      placeholder: |
+        1. Create SocketClient with ...
+        2. Connect and join ...
+        3. Observe ...
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Include versions and platforms relevant to the bug.
+      value: |
+        - PhoenixNectar version:
+        - Swift version:
+        - Xcode version:
+        - OS / simulator / device:
+        - Phoenix / Elixir version:
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or traces
+      description: Include relevant logs, errors, or protocol traces if available.
+      render: text

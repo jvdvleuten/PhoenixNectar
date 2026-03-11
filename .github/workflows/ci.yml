@@ -1,0 +1,111 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  test-swift:
+    name: Test (${{ matrix.label }}, Swift ${{ matrix.swift }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: Linux
+            os: ubuntu-24.04
+            swift: "6.1"
+          - label: Linux
+            os: ubuntu-24.04
+            swift: "6.2"
+          - label: macOS
+            os: macos-15
+            swift: "6.1"
+          - label: macOS
+            os: macos-15
+            swift: "6.2"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Swift
+        uses: swift-actions/setup-swift@v2
+        with:
+          swift-version: ${{ matrix.swift }}
+
+      - name: Swift Version
+        run: swift --version
+
+      - name: Resolve Dependencies
+        run: swift package resolve
+
+      - name: Run Tests
+        run: swift test --parallel
+
+  test-e2e-macos:
+    name: E2E (macOS + Phoenix)
+    runs-on: macos-15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Swift
+        uses: swift-actions/setup-swift@v2
+        with:
+          swift-version: "6.1"
+
+      - name: Setup Elixir/Erlang
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: "1.19.4"
+          otp-version: "28.1"
+
+      - name: Run Phoenix-backed E2E
+        run: ./e2e/scripts/run-swift-e2e.sh
+
+  demo-ios-build-macos:
+    name: Demo App Build (iOS Simulator)
+    runs-on: macos-15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Build ChatShowcaseApp
+        run: xcodebuild -project demos/ChatShowcaseApp/ChatShowcaseApp.xcodeproj -scheme ChatShowcaseApp -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' build
+
+  test-e2e-backend-linux:
+    name: E2E Backend Contract (Linux, Phoenix ${{ matrix.phoenix }}, Elixir ${{ matrix.elixir }})
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - track: current-stable
+            phoenix: "1.8.5"
+            phoenix_requirement: "== 1.8.5"
+            elixir: "1.19"
+            otp: "28"
+          - track: previous-stable
+            phoenix: "1.8.4"
+            phoenix_requirement: "== 1.8.4"
+            elixir: "1.18"
+            otp: "27"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Elixir/Erlang
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: ${{ matrix.elixir }}
+          otp-version: ${{ matrix.otp }}
+
+      - name: Run Phoenix backend contract tests
+        env:
+          PHOENIX_REQUIREMENT: ${{ matrix.phoenix_requirement }}
+          MATRIX_TRACK: ${{ matrix.track }}
+        run: ./e2e/scripts/run-phoenix-backend-contract.sh
