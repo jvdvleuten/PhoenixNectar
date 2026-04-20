@@ -7,7 +7,8 @@
 <p align="center">
   <a href="https://github.com/jvdvleuten/PhoenixNectar/actions/workflows/ci.yml"><img src="https://github.com/jvdvleuten/PhoenixNectar/actions/workflows/ci.yml/badge.svg" alt="CI" /></a>
   <a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT" /></a>
-  <a href="https://www.swift.org/"><img src="https://img.shields.io/badge/Swift-6.1%2B-orange.svg" alt="Swift 6.1+" /></a>
+  <a href="https://swiftpackageindex.com/jvdvleuten/PhoenixNectar"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fjvdvleuten%2FPhoenixNectar%2Fbadge%3Ftype%3Dswift-versions" alt="Swift Package Index: Swift versions" /></a>
+  <a href="https://swiftpackageindex.com/jvdvleuten/PhoenixNectar"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fjvdvleuten%2FPhoenixNectar%2Fbadge%3Ftype%3Dplatforms" alt="Swift Package Index: platforms" /></a>
 </p>
 
 <p align="center">
