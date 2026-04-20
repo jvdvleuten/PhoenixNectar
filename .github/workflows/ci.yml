@@ -18,16 +18,10 @@ jobs:
         include:
           - label: Linux
             os: ubuntu-24.04
-            swift: "6.0"
-          - label: Linux
-            os: ubuntu-24.04
             swift: "6.1"
           - label: Linux
             os: ubuntu-24.04
             swift: "6.2"
-          - label: macOS
-            os: macos-15
-            swift: "6.0"
           - label: macOS
             os: macos-15
             swift: "6.1"
